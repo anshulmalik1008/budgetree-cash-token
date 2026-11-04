@@ -1,0 +1,719 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Budgetree Cash Token</title>
+<meta name="theme-color" content="#064E3B">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: one mobile column (max 430px) centred on larger screens; sticky action button at the bottom of each step */
+:root{
+  --forest:#064E3B; --g700:#0A6B50; --deep:#043A2C; --em:#10B981; --mint:#BBF7D0; --g100:#D1FAE5;
+  --bg:#E8F0EC; --card:#FFFFFF; --muted:#4B6B60; --line:#CFE3D8; --ok:#16A34A; --on:#F0FDF4;
+  --err:#C2410C; --errbg:#FFF1EB;
+  --font:"Plus Jakarta Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --rupee:"Plus Jakarta Sans","Noto Sans","Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--forest);font-family:var(--font);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+button,input{font-family:inherit}
+.app{position:relative;max-width:430px;min-height:100%;margin:0 auto;display:flex;flex-direction:column;overflow:hidden;
+  background:radial-gradient(circle at 10% 6%,var(--g100) 0,transparent 45%),radial-gradient(circle at 95% 45%,rgba(16,185,129,.16) 0,transparent 40%),radial-gradient(circle at 15% 85%,#fff 0,transparent 45%),var(--bg)}
+@media (min-width:600px){body{padding-block:24px}.app{min-height:calc(100% - 0px);border-radius:32px;box-shadow:0 30px 80px -30px rgba(6,78,59,.35)}}
+.app.dark{background:radial-gradient(circle at 50% 30%,#0E7A5A 0,transparent 55%),linear-gradient(180deg,#0A6B50,#032C22);color:#fff}
+.wrap{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+
+/* header */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding-block:20px 14px}
+.brand svg{height:24px;width:auto;display:block;fill:var(--forest)}
+.brand small{display:block;margin-top:6px;font-size:11px;font-weight:600;color:var(--muted)}
+.dark .brand svg{fill:#fff}.dark .brand small{color:rgba(255,255,255,.75)}
+.pill{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:15px;background:#fff;border:1.2px solid var(--mint);font-size:12px;font-weight:700;color:var(--forest)}
+.dark .pill{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);color:#fff}
+.tick{width:16px;height:16px;flex:none}
+
+main{flex:1;display:flex;flex-direction:column;gap:14px;padding-bottom:18px}
+.screen{display:flex;flex-direction:column;gap:14px;flex:1;animation:in .35s ease both}
+@keyframes in{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* banner + logo slot */
+.banner{position:relative;height:150px;border-radius:24px;background:linear-gradient(135deg,var(--g100),#A7F3D0);margin-bottom:34px;overflow:visible}
+.banner .bimg{position:absolute;inset:0;border-radius:24px;background-size:cover;background-position:center}
+.banner .bph{position:absolute;inset:0;border:1.5px dashed var(--em);border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:700;color:var(--forest)}
+.banner .bph span{font-size:11px;font-weight:500;color:var(--muted)}
+.avatar{position:absolute;left:50%;bottom:-40px;transform:translateX(-50%);width:84px;height:84px;border-radius:50%;background:#fff;border:4px solid var(--bg);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -8px rgba(6,78,59,.35)}
+.avatar svg{width:56px;fill:var(--forest)}
+h1{margin:0;font-size:22px;font-weight:800;text-align:center;text-wrap:balance;letter-spacing:-.01em}
+h2{margin:0;font-size:19px;font-weight:800;text-wrap:balance}
+
+/* ticket */
+.ticket{position:relative;border-radius:24px;padding:16px 18px 12px;background:linear-gradient(135deg,var(--g700),var(--deep));color:var(--on);overflow:hidden}
+.ticket::before,.ticket::after{content:"";position:absolute;top:62px;width:16px;height:16px;border-radius:50%;background:var(--bg)}
+.ticket::before{left:-8px}.ticket::after{right:-8px}
+.ticket .lbl{font-size:12px;font-weight:600;opacity:.85}
+.ticket .amt{font-size:30px;font-weight:800;letter-spacing:-.01em;font-family:var(--rupee);margin-top:2px}
+.ticket .coin{position:absolute;right:18px;top:16px;width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#34D399,var(--em) 60%,#047857);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;box-shadow:0 0 0 6px rgba(16,185,129,.25)}
+.ticket .glow{position:absolute;right:-20px;top:-30px;width:110px;height:110px;border-radius:50%;background:var(--em);opacity:.35;filter:blur(8px)}
+.ticket .foot{display:flex;justify-content:space-between;margin-top:10px;padding-top:9px;border-top:1.5px dashed rgba(255,255,255,.28);font-size:11px;font-weight:600}
+.ticket .foot b{color:#6EE7B7}
+
+/* fields */
+.field{display:flex;flex-direction:column;gap:6px}
+.flabel{display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;font-weight:700;color:var(--forest)}
+.flabel .opt{font-size:10.5px;letter-spacing:.06em;color:var(--em)}
+.flabel button{border:0;background:none;padding:0;color:var(--em);font-weight:700;font-size:12.5px;cursor:pointer}
+.input{display:flex;align-items:center;gap:10px;height:54px;padding:0 16px;background:#fff;border:1.4px solid var(--mint);border-radius:18px;transition:border-color .15s,box-shadow .15s}
+.input:focus-within{border-color:var(--forest);box-shadow:0 0 0 4px rgba(16,185,129,.15)}
+.input input{flex:1;min-width:0;border:0;outline:0;background:none;font-size:16px;font-weight:600;color:var(--forest)}
+.input input::placeholder{color:#9DB5AA;font-weight:500}
+.input input:disabled{color:var(--muted)}
+.input.bad{border-color:var(--err)}
+.input.lock{background:#F4FAF7}
+.err{font-size:12px;font-weight:600;color:var(--err);min-height:0}
+.err:empty{display:none}
+.hint{font-size:12px;color:var(--muted);font-weight:500}
+.row{display:flex;gap:10px}
+.cc{flex:none;width:92px;justify-content:center;gap:6px;font-weight:700;font-size:15px}
+.flag{width:20px;height:14px;border-radius:2px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.flag i{flex:1}.flag i:nth-child(1){background:#FF9933}.flag i:nth-child(2){background:#fff;position:relative}.flag i:nth-child(3){background:#138808}
+.flag i:nth-child(2)::after{content:"";position:absolute;left:50%;top:50%;width:3px;height:3px;border-radius:50%;background:#000080;transform:translate(-50%,-50%)}
+
+/* otp */
+.otp{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.otp input{width:100%;height:56px;text-align:center;font-size:22px;font-weight:800;color:var(--forest);background:var(--g100);border:1.4px solid transparent;border-radius:16px;outline:0;font-variant-numeric:tabular-nums}
+.otp input:focus{background:#fff;border-color:var(--forest)}
+.otp.bad input{border-color:var(--err);background:var(--errbg)}
+.otp.good input{border-color:var(--ok);background:#fff}
+.otpmeta{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.reading{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;color:var(--forest)}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid var(--mint);border-top-color:var(--em);animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.resend{border:0;height:28px;padding:0 12px;border-radius:14px;background:var(--g100);color:var(--forest);font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;cursor:pointer}
+.resend:disabled{cursor:default;opacity:.8}
+.demo{font-size:11.5px;color:var(--muted);background:rgba(255,255,255,.6);border:1px dashed var(--mint);border-radius:12px;padding:8px 10px}
+.demo b{color:var(--forest)}
+
+/* segmented */
+.seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;background:#DCE8E2;border-radius:20px}
+.seg button{height:42px;border:0;border-radius:16px;background:none;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.seg button[aria-selected="true"]{background:#fff;color:var(--forest);box-shadow:0 2px 8px -2px rgba(6,78,59,.2)}
+.verified{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:16px;background:var(--g100);border:1px solid var(--mint)}
+.verified small{display:block;font-size:10.5px;font-weight:600;color:var(--muted)}
+.verified b{font-size:14px;letter-spacing:.02em}
+.verified.wait{background:#fff}
+.chip-ok{display:inline-flex;align-items:center;gap:4px;height:24px;padding:0 8px;border-radius:12px;background:var(--g100);font-size:10.5px;font-weight:700;color:var(--g700);white-space:nowrap}
+.note{font-size:12px;font-weight:600;padding:10px 14px;border-radius:14px;background:var(--g100);color:var(--g700)}
+
+/* buttons */
+.cta{margin-top:auto;padding-top:8px}
+.btn{width:100%;height:56px;border:0;border-radius:28px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(180deg,var(--g700),var(--forest));color:var(--on);box-shadow:0 12px 24px -12px rgba(6,78,59,.6);transition:transform .1s,opacity .15s}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.btn.ghost{background:#fff;color:var(--forest);border:1.4px solid var(--mint);box-shadow:none}
+.btn:focus-visible,.seg button:focus-visible,.resend:focus-visible{outline:3px solid var(--em);outline-offset:2px}
+.btn svg{width:18px;height:18px}
+.subcta{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:10px;font-size:12px;font-weight:600;color:var(--g700)}
+
+/* processing */
+.orbit{position:relative;width:220px;height:220px;margin:10px auto 0}
+.orbit .ring{position:absolute;inset:0;border-radius:50%;border:1px dashed rgba(255,255,255,.25)}
+.orbit .ring.r2{inset:26px;border-style:solid;border-color:rgba(110,231,183,.25)}
+.orbit svg.prog{position:absolute;inset:40px;transform:rotate(-90deg)}
+.orbit .core{position:absolute;inset:62px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#34D399,var(--em) 55%,#047857);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;font-family:var(--rupee);box-shadow:0 0 40px rgba(16,185,129,.6);animation:pulse 1.6s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 60px rgba(16,185,129,.9)}}
+.orbit .dot{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:#6EE7B7;animation:orb 3s linear infinite}
+@keyframes orb{from{transform:rotate(0) translateX(104px)}to{transform:rotate(360deg) translateX(104px)}}
+.from,.to{margin:0 auto;display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:22px}
+.from{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);font-size:10px;font-weight:700;letter-spacing:.08em}
+.from svg{height:16px;fill:#fff}
+.to{background:#fff;color:var(--forest);min-width:200px}
+.to small{display:block;font-size:9px;font-weight:800;letter-spacing:.08em;color:var(--em)}
+.to b{font-size:13px}
+.ptitle{text-align:center}
+.ptitle h2{font-size:22px;color:#fff}
+.ptitle p{margin:6px 0 0;font-size:13px;color:rgba(255,255,255,.8)}
+.bar{height:8px;border-radius:4px;background:rgba(255,255,255,.2);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6EE7B7,#fff);border-radius:4px;transition:width .2s linear}
+.barmeta{display:flex;justify-content:space-between;font-size:11px;font-weight:700;margin-top:6px;font-variant-numeric:tabular-nums}
+.steps{display:flex;flex-wrap:wrap;gap:8px}
+.steps span{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px;border-radius:15px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:11.5px;font-weight:700;opacity:.5;transition:opacity .3s,background .3s}
+.steps span.on{opacity:1}
+.steps span.now{background:#fff;color:var(--forest);opacity:1}
+.warn{display:flex;justify-content:center;align-items:center;gap:8px;font-size:12px;font-weight:600;color:rgba(255,255,255,.85)}
+
+/* success / failure */
+.hero{margin:0 calc(-1 * max(20px,env(safe-area-inset-left,0px)));padding:8px 20px 34px;background:linear-gradient(180deg,var(--g700),var(--deep));color:#fff;border-radius:0 0 50% 50% / 0 0 40px 40px;text-align:center;position:relative;overflow:hidden}
+.hero.fail{background:linear-gradient(180deg,#7C2D12,#431407)}
+.hero .big{width:96px;height:96px;margin:6px auto 14px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#34D399,var(--em) 60%,#047857);box-shadow:0 0 0 12px rgba(16,185,129,.18),0 0 0 24px rgba(16,185,129,.08);animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
+.hero.fail .big{background:radial-gradient(circle at 35% 30%,#FB923C,#EA580C 60%,#9A3412);box-shadow:0 0 0 12px rgba(234,88,12,.2),0 0 0 24px rgba(234,88,12,.08)}
+@keyframes pop{from{transform:scale(.4);opacity:0}}
+.hero .big svg{width:46px;height:46px}
+.hero h2{font-size:24px;color:#fff}
+.hero p{margin:6px 0 0;font-size:13px;opacity:.85;font-weight:600}
+.conf{position:absolute;width:5px;height:12px;border-radius:2px;background:#6EE7B7;opacity:.8}
+.receipt{position:relative;background:#fff;border:1.2px solid var(--mint);border-radius:24px;padding:16px 18px;margin-top:-6px}
+.receipt::before,.receipt::after{content:"";position:absolute;top:78px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:1.2px solid var(--mint)}
+.receipt::before{left:-10px;clip-path:inset(0 0 0 50%)}.receipt::after{right:-10px;clip-path:inset(0 50% 0 0)}
+.receipt .top{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:14px;border-bottom:1.5px dashed var(--line)}
+.receipt .top small{font-size:11px;font-weight:600;color:var(--muted)}
+.receipt .top .amt{font-size:28px;font-weight:800;font-family:var(--rupee)}
+.status{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 10px;border-radius:13px;background:var(--g100);font-size:11px;font-weight:700;color:var(--g700)}
+.status.f{background:var(--errbg);color:var(--err)}
+dl{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:10px 12px;font-size:12.5px}
+dt{color:var(--muted);font-weight:500}
+dd{margin:0;text-align:right;font-weight:700;min-width:0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.copy{border:0;background:none;color:var(--em);font-weight:700;font-size:11px;cursor:pointer;padding:0 0 0 6px}
+
+footer{padding-block:6px 18px;text-align:center;font-size:12px;line-height:1.7}
+footer .h{font-weight:600;color:var(--g700)}
+footer .p{display:flex;justify-content:center;align-items:center;gap:6px;color:var(--muted);font-weight:500}
+footer .p svg{height:12px;fill:var(--forest)}
+.dark footer .h{color:#A7F3D0}.dark footer .p{color:rgba(255,255,255,.75)}.dark footer .p svg{fill:#fff}
+
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);max-width:min(380px,calc(100% - 32px));padding:12px 16px;border-radius:14px;background:var(--forest);color:#fff;font-size:13px;font-weight:600;box-shadow:0 14px 30px -10px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:30}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* tester panel */
+.tbtn{position:fixed;left:env(safe-area-inset-left,0px);top:50%;z-index:40;width:22px;height:64px;border-radius:0 10px 10px 0;writing-mode:vertical-rl;letter-spacing:.1em;opacity:.55;border:0;background:#111827;color:#fff;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px -6px rgba(0,0,0,.5)}
+.tpanel{position:fixed;left:calc(28px + env(safe-area-inset-left,0px));top:30%;z-index:40;width:250px;max-width:calc(100% - 24px);background:#111827;color:#E5E7EB;border-radius:16px;padding:14px;font-size:12px;box-shadow:0 20px 40px -10px rgba(0,0,0,.5)}
+.tpanel h3{margin:0 0 8px;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#9CA3AF}
+.tpanel .g{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.tpanel button{height:30px;border:1px solid #374151;background:#1F2937;color:#fff;border-radius:8px;font-size:11.5px;font-weight:600;cursor:pointer}
+.tpanel label{display:flex;align-items:center;gap:8px;margin-top:6px}
+.tpanel p{margin:8px 0 0;color:#9CA3AF;line-height:1.5}
+
+
+/* location gate */
+.gate{align-items:center;text-align:center;justify-content:center;gap:16px}
+.pin{position:relative;width:150px;height:150px;margin:18px auto 6px;display:flex;align-items:center;justify-content:center}
+.pin::before,.pin::after,.pin i{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--em);opacity:0;animation:ring 2.4s ease-out infinite}
+.pin::after{animation-delay:.8s}.pin i{animation-delay:1.6s}
+.pin .core{position:relative;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#34D399,var(--em) 55%,#047857);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 40px -12px rgba(6,78,59,.55);animation:bob2 2.6s ease-in-out infinite}
+@keyframes bob2{50%{transform:translateY(-6px)}}
+.pin .core svg{width:42px;height:42px}
+.pin.denied .core{background:radial-gradient(circle at 35% 30%,#FB923C,#EA580C 60%,#9A3412)}
+.pin.denied::before,.pin.denied::after,.pin.denied i{border-color:#EA580C}
+.pin.ok .core{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}
+.gate p.lead{margin:0;max-width:30ch;font-size:14px;line-height:1.55;color:var(--muted);font-weight:500}
+.why{width:100%;display:grid;gap:8px;text-align:left}
+.why div{display:flex;gap:10px;align-items:center;padding:10px 14px;background:#fff;border:1.2px solid var(--mint);border-radius:16px;font-size:12.5px;font-weight:600}
+.why div span{flex:none;width:28px;height:28px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:14px}
+.howto{width:100%;text-align:left;background:var(--errbg);border:1.2px solid #FED7AA;border-radius:16px;padding:12px 14px;font-size:12.5px;line-height:1.6;color:#7C2D12}
+.howto .ht{display:block;margin-bottom:4px;font-weight:800;color:var(--err)}
+.howto ol{margin:0;padding-left:18px}
+.linkbtn{border:0;background:none;color:var(--g700);font-weight:700;font-size:12.5px;text-decoration:underline;cursor:pointer;padding:6px}
+.cta.full{width:100%}
+
+.loc{border-radius:20px;background:#fff;border:1.4px solid var(--mint);padding:12px;display:flex;flex-direction:column;gap:10px;transition:background .3s,border-color .3s}
+.loc.ok{background:var(--g100);border-color:var(--em)}
+.loc.denied,.loc.unsupported{background:var(--errbg);border-color:#FDBA8C}
+.loc.shake{animation:shake .4s}
+.loc-row{display:flex;align-items:center;gap:12px}
+.loc-ic{position:relative;flex:none;width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#34D399,var(--em) 55%,#047857);box-shadow:0 8px 18px -8px rgba(6,78,59,.6)}
+.loc-ic svg{width:22px;height:22px;position:relative}
+.loc-ic i{position:absolute;inset:0;border-radius:50%;border:2px solid var(--em);animation:ring 2s ease-out infinite}
+.loc.ok .loc-ic{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both}.loc.ok .loc-ic i{display:none}
+.loc.denied .loc-ic,.loc.unsupported .loc-ic{background:radial-gradient(circle at 35% 30%,#FB923C,#EA580C 60%,#9A3412)}
+.loc.denied .loc-ic i,.loc.unsupported .loc-ic i{border-color:#EA580C}
+.loc-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.loc-tx b{font-size:14px;font-weight:800}
+.loc-tx span{font-size:12px;color:var(--muted);font-weight:500;line-height:1.4}
+.loc.denied .loc-tx b{color:var(--err)}
+.loc-btn{flex:none;height:38px;padding:0 16px;border:0;border-radius:19px;background:linear-gradient(180deg,var(--g700),var(--forest));color:var(--on);font-weight:700;font-size:13px;cursor:pointer;position:relative;overflow:hidden}
+.loc-btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.3) 50%,transparent 65%) 0 0/250% 100%;animation:shim 2.4s ease-in-out infinite}
+.loc-btn:focus-visible{outline:3px solid var(--em);outline-offset:2px}
+.loc .linkbtn{align-self:flex-start;padding:0}
+
+.cta.appear{animation:rise .45s cubic-bezier(.3,1.4,.5,1) both}
+.sheet-wrap{position:fixed;inset:0;z-index:50;background:rgba(4,30,22,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .25s both}
+.sheet-wrap.closing{animation:fadeOut .25s both}
+@keyframes fadeIn{from{opacity:0}}@keyframes fadeOut{to{opacity:0}}
+.sheet{width:100%;max-width:430px;background:var(--bg);border-radius:28px 28px 0 0;padding:10px max(20px,env(safe-area-inset-left,0px)) calc(22px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:sheetUp .45s cubic-bezier(.2,.9,.3,1.1) both}
+@keyframes sheetUp{from{transform:translateY(100%)}}
+.sheet .grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin-bottom:6px}
+.sheet h2{font-size:20px}
+.sheet .lead{margin:0;font-size:13.5px;line-height:1.5;color:var(--muted);font-weight:500;max-width:32ch}
+.loc-ic.big{width:72px;height:72px;margin-top:4px;background:radial-gradient(circle at 35% 30%,#FB923C,#EA580C 60%,#9A3412)}
+.loc-ic.big i{border-color:#EA580C}
+.loc-ic.big svg{width:34px;height:34px}
+
+.sim-wrap{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:24px;animation:fadeIn .2s both}
+.sim-wrap.closing{animation:fadeOut .2s both}
+.sim{width:100%;max-width:320px;background:#fff;border-radius:24px;padding:22px 20px 16px;text-align:center;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:pop .35s cubic-bezier(.3,1.4,.5,1) both;color:#1F2937}
+.sim-ic{width:44px;height:44px;margin:0 auto 10px;border-radius:50%;background:#2563EB;display:flex;align-items:center;justify-content:center}
+.sim-ic svg{width:22px;height:22px}
+.sim p{margin:0 0 16px;font-size:16px;line-height:1.4}
+.sim-btns{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sim-btns button{height:44px;border-radius:22px;border:0;font-size:15px;font-weight:700;cursor:pointer;background:#EEF2F7;color:#1F2937}
+.sim-btns #simAllow{background:#2563EB;color:#fff}
+.sim small{display:block;margin-top:12px;font-size:11px;color:#6B7280}
+/* ===== motion layer ===== */
+.app::before,.app::after{content:"";position:absolute;border-radius:50%;filter:blur(30px);pointer-events:none;z-index:0}
+.app::before{width:260px;height:260px;left:-80px;top:-60px;background:rgba(167,243,208,.7);animation:drift 14s ease-in-out infinite alternate}
+.app::after{width:240px;height:240px;right:-90px;top:40%;background:rgba(16,185,129,.22);animation:drift 18s ease-in-out infinite alternate-reverse}
+.app.dark::before{background:rgba(52,211,153,.35)}.app.dark::after{background:rgba(110,231,183,.2)}
+@keyframes drift{to{transform:translate(60px,80px) scale(1.2)}}
+.app>*{position:relative;z-index:1}
+.hdr .brand{animation:fadeDown .6s ease both}.hdr .pill{animation:fadeDown .6s .1s ease both}
+.hdr .pill .tick{animation:spinIn .7s .3s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}}
+@keyframes spinIn{from{transform:rotate(-180deg) scale(0)}}
+.screen>*{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
+.screen>*:nth-child(1){animation-delay:.02s}.screen>*:nth-child(2){animation-delay:.08s}.screen>*:nth-child(3){animation-delay:.14s}.screen>*:nth-child(4){animation-delay:.2s}.screen>*:nth-child(5){animation-delay:.26s}.screen>*:nth-child(6){animation-delay:.32s}.screen>*:nth-child(7){animation-delay:.38s}.screen>*:nth-child(8){animation-delay:.44s}
+@keyframes rise{from{opacity:0;transform:translateY(18px) scale(.98)}}
+.screen.out{animation:out .22s ease both}
+@keyframes out{to{opacity:0;transform:translateX(-24px)}}
+.banner{animation:rise .6s both}
+.banner .bph{background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.5) 50%,transparent 70%) 0 0/250% 100%;animation:shim 3s linear infinite}
+.avatar{animation:bob 4s ease-in-out infinite}
+@keyframes bob{50%{transform:translate(-50%,-6px)}}
+.ticket{transition:transform .3s}
+.ticket .coin{animation:coin 4s ease-in-out infinite}
+@keyframes coin{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.06);box-shadow:0 0 0 10px rgba(16,185,129,.18)}}
+.ticket .glow{animation:glow 3.5s ease-in-out infinite}
+@keyframes glow{50%{opacity:.6;transform:scale(1.25)}}
+.ticket::marker{content:none}
+.ticket .shine{position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.18) 50%,transparent 65%) 0 0/250% 100%;animation:shim 4.5s ease-in-out infinite;pointer-events:none}
+@keyframes shim{from{background-position:150% 0}to{background-position:-100% 0}}
+.btn{position:relative;overflow:hidden}
+.btn:not(:disabled)::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.25) 50%,transparent 65%) 0 0/250% 100%;animation:shim 2.8s ease-in-out infinite}
+.btn.ghost::after{display:none}
+.btn svg{transition:transform .2s}.btn:hover svg{transform:translateX(4px)}
+.btn:not(:disabled) svg{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(4px)}}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);animation:rip .6s ease-out forwards;pointer-events:none}
+.btn.ghost .ripple{background:rgba(16,185,129,.25)}
+@keyframes rip{to{transform:scale(4);opacity:0}}
+.input{transition:border-color .15s,box-shadow .2s,transform .2s}
+.input:focus-within{transform:translateY(-1px)}
+.bad,.otp.bad{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.err:not(:empty){animation:rise .3s both}
+.otp input{transition:transform .15s,background .2s,border-color .2s}
+.otp input.pop{animation:pop2 .25s ease}
+@keyframes pop2{50%{transform:scale(1.15)}}
+.otp.good input{animation:wave .5s ease both}
+.otp.good input:nth-child(2){animation-delay:.05s}.otp.good input:nth-child(3){animation-delay:.1s}.otp.good input:nth-child(4){animation-delay:.15s}.otp.good input:nth-child(5){animation-delay:.2s}.otp.good input:nth-child(6){animation-delay:.25s}
+@keyframes wave{50%{transform:translateY(-8px);background:var(--g100)}}
+#otpArea>.field{animation:rise .5s both}
+.seg{position:relative}
+.seg .knob{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:16px;background:#fff;box-shadow:0 2px 8px -2px rgba(6,78,59,.2);transition:transform .35s cubic-bezier(.3,1.4,.5,1)}
+.seg.bank .knob{transform:translateX(100%)}
+.seg button{position:relative;z-index:1;transition:color .2s}
+.seg button[aria-selected="true"]{background:none;box-shadow:none}
+.verified{animation:rise .4s both}
+.verified .tick{animation:spinIn .5s cubic-bezier(.3,1.5,.5,1) both}
+.chip-ok{animation:rise .3s both}
+.note{animation:rise .5s .3s both}
+/* processing */
+.flyer{position:absolute;font-weight:800;color:#6EE7B7;font-size:14px;pointer-events:none;animation:fly 2.4s ease-in infinite}
+@keyframes fly{0%{transform:translate(0,0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.3);opacity:0}}
+.orbit .ring{animation:rot 18s linear infinite}.orbit .ring.r2{animation:rot 10s linear infinite reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+.from svg{animation:none}
+.to{animation:rise .5s .3s both,float 3s 1s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-4px)}}
+.trail{position:relative;width:2px;height:28px;margin:-10px auto;background:linear-gradient(#6EE7B7,transparent);overflow:hidden}
+.trail::after{content:"";position:absolute;left:-2px;width:6px;height:10px;border-radius:3px;background:#fff;animation:drop 1.2s linear infinite}
+@keyframes drop{from{top:-10px}to{top:28px}}
+.steps span.on .tick{animation:spinIn .5s both}
+/* success */
+.hero .big svg path{stroke-dasharray:30;stroke-dashoffset:30;animation:draw .5s .45s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.hero .big{position:relative}
+.hero .big::before,.hero .big::after{content:"";position:absolute;inset:-12px;border-radius:50%;border:2px solid rgba(110,231,183,.6);animation:ring 2s .6s ease-out infinite}
+.hero .big::after{animation-delay:1.6s}
+.hero.fail .big::before,.hero.fail .big::after{border-color:rgba(251,146,60,.6)}
+@keyframes ring{from{transform:scale(.8);opacity:1}to{transform:scale(1.8);opacity:0}}
+.hero h2{animation:rise .5s .5s both}.hero p{animation:rise .5s .6s both}
+.conf{animation:fall var(--t,2.6s) var(--d,0s) ease-in both}
+@keyframes fall{from{transform:translateY(-120px) rotate(0);opacity:0}20%{opacity:1}to{transform:translateY(180px) rotate(var(--r,360deg));opacity:0}}
+.hero.fail .big{animation:pop .5s cubic-bezier(.3,1.6,.5,1) both,shake .5s .5s}
+.receipt{animation:slideUp .7s .35s cubic-bezier(.2,.8,.2,1) both}
+@keyframes slideUp{from{opacity:0;transform:translateY(40px)}}
+dl>*{animation:rise .4s both}
+dl>*:nth-child(n+1){animation-delay:.7s}dl>*:nth-child(n+3){animation-delay:.8s}dl>*:nth-child(n+5){animation-delay:.9s}dl>*:nth-child(n+7){animation-delay:1s}dl>*:nth-child(n+9){animation-delay:1.1s}
+.toast{transition:opacity .25s,transform .35s cubic-bezier(.3,1.5,.5,1)}
+.tpanel:not([hidden]){animation:rise .25s both}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="app" id="app">
+  <div class="wrap">
+    <header class="hdr">
+      <div class="brand"><svg viewBox="0 0 1847 370" aria-label="budgetree"><path fill-rule="evenodd" d="M227 79 L227 185 L230 206 L235 222 L243 238 L264 262 L281 274 L308 285 L324 288 L351 288 L378 281 L394 273 L410 261 L421 250 L430 238 L438 223 L445 200 L446 80 L400 80 L400 183 L396 202 L384 221 L367 235 L352 241 L327 242 L311 237 L295 227 L283 213 L275 195 L273 176 L273 78ZM1735 76 L1716 79 L1693 87 L1673 100 L1655 118 L1646 132 L1637 154 L1633 175 L1633 195 L1636 211 L1647 238 L1659 254 L1672 266 L1685 275 L1709 285 L1731 289 L1743 289 L1759 287 L1778 281 L1799 269 L1820 249 L1834 227 L1784 226 L1761 242 L1749 245 L1730 245 L1720 243 L1706 236 L1697 229 L1685 214 L1682 205 L1685 203 L1843 203 L1845 197 L1846 173 L1842 151 L1834 132 L1826 119 L1810 102 L1781 84 L1761 78ZM1682 161 L1690 145 L1703 131 L1715 124 L1732 119 L1757 121 L1771 127 L1790 144 L1798 159 L1796 162ZM1394 75 L1381 75 L1366 78 L1339 90 L1318 107 L1301 130 L1292 151 L1288 170 L1288 284 L1333 283 L1333 181 L1336 163 L1347 142 L1359 130 L1377 120 L1394 117ZM1506 74 L1482 78 L1459 88 L1442 100 L1429 113 L1418 129 L1410 147 L1405 170 L1405 193 L1409 213 L1418 234 L1432 253 L1445 265 L1459 274 L1477 282 L1495 286 L1519 287 L1537 284 L1568 271 L1590 252 L1601 238 L1607 225 L1556 225 L1542 236 L1531 241 L1516 244 L1500 243 L1488 239 L1474 231 L1461 218 L1454 206 L1454 203 L1616 202 L1619 194 L1620 172 L1617 153 L1611 136 L1599 116 L1587 103 L1568 89 L1552 81 L1529 75ZM1454 157 L1464 140 L1477 128 L1496 119 L1516 117 L1538 122 L1551 130 L1564 144 L1571 159 L1484 161 L1455 160ZM1029 74 L1009 78 L988 87 L972 98 L956 114 L942 135 L937 147 L932 167 L931 190 L934 209 L939 225 L952 247 L969 264 L980 272 L1005 283 L1023 287 L1048 287 L1067 283 L1096 268 L1119 246 L1131 225 L1081 225 L1069 235 L1055 242 L1047 244 L1027 244 L1016 241 L1004 235 L995 228 L986 217 L980 203 L1144 202 L1147 191 L1148 170 L1146 155 L1141 139 L1128 116 L1113 100 L1091 85 L1070 77 L1055 74ZM981 159 L987 147 L1001 131 L1018 121 L1029 118 L1051 118 L1069 124 L1078 130 L1090 142 L1098 158 L1097 160 L1092 161 L988 161ZM799 74 L778 77 L760 83 L739 95 L719 114 L708 130 L700 149 L696 169 L696 194 L703 221 L717 245 L740 267 L762 279 L790 286 L816 285 L828 282 L843 275 L867 255 L868 256 L868 270 L865 284 L857 299 L844 312 L829 320 L817 323 L798 324 L798 367 L814 369 L842 364 L863 355 L881 342 L901 318 L909 300 L914 279 L915 178 L911 155 L902 133 L892 118 L876 101 L860 90 L844 82 L824 76ZM797 119 L819 121 L831 126 L843 134 L858 154 L864 177 L861 199 L856 210 L848 221 L832 234 L810 241 L786 239 L768 230 L755 218 L745 200 L742 188 L742 172 L744 163 L753 145 L769 129 L783 122ZM1164 5 L1163 191 L1164 206 L1169 225 L1177 241 L1187 254 L1207 270 L1224 278 L1247 283 L1266 283 L1266 241 L1249 240 L1232 233 L1219 221 L1212 208 L1209 196 L1209 122 L1211 120 L1267 120 L1267 80 L1210 79 L1209 5ZM2 2 L1 187 L5 209 L17 236 L32 255 L45 266 L66 278 L82 284 L102 287 L125 286 L142 282 L164 272 L185 256 L198 241 L210 220 L214 208 L217 193 L217 169 L214 152 L205 129 L191 110 L175 95 L153 82 L133 75 L100 73 L83 76 L66 82 L49 92 L48 3ZM90 121 L99 119 L121 119 L139 126 L155 139 L165 153 L169 163 L171 186 L169 196 L163 210 L152 224 L140 233 L127 239 L101 241 L77 232 L61 218 L50 198 L47 174 L53 153 L62 140 L71 131ZM680 1 L634 1 L634 90 L632 92 L617 84 L600 78 L588 76 L563 76 L549 78 L531 84 L503 101 L485 119 L476 132 L468 150 L464 165 L463 197 L465 209 L470 224 L484 247 L498 261 L515 273 L530 280 L553 286 L579 287 L601 283 L617 277 L637 265 L655 248 L665 234 L675 213 L680 188ZM579 120 L590 122 L604 128 L622 144 L632 163 L634 187 L631 200 L625 212 L608 230 L587 240 L572 242 L560 241 L537 232 L530 227 L518 213 L512 201 L510 191 L510 173 L519 150 L536 132 L557 122Z"/></svg></div>
+      <span class="pill"><svg class="tick" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="#16A34A"/><path d="M4.6 8.2l2.2 2.2 4.4-4.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified</span>
+    </header>
+  </div>
+  <main class="wrap" id="main"></main>
+  <footer class="wrap">
+    <div class="h">Need help? 91939 11100 · support@budgetree.in</div>
+    <div class="p">Secured &amp; powered by <svg viewBox="0 0 1847 370" aria-label="budgetree"><path fill-rule="evenodd" d="M227 79 L227 185 L230 206 L235 222 L243 238 L264 262 L281 274 L308 285 L324 288 L351 288 L378 281 L394 273 L410 261 L421 250 L430 238 L438 223 L445 200 L446 80 L400 80 L400 183 L396 202 L384 221 L367 235 L352 241 L327 242 L311 237 L295 227 L283 213 L275 195 L273 176 L273 78ZM1735 76 L1716 79 L1693 87 L1673 100 L1655 118 L1646 132 L1637 154 L1633 175 L1633 195 L1636 211 L1647 238 L1659 254 L1672 266 L1685 275 L1709 285 L1731 289 L1743 289 L1759 287 L1778 281 L1799 269 L1820 249 L1834 227 L1784 226 L1761 242 L1749 245 L1730 245 L1720 243 L1706 236 L1697 229 L1685 214 L1682 205 L1685 203 L1843 203 L1845 197 L1846 173 L1842 151 L1834 132 L1826 119 L1810 102 L1781 84 L1761 78ZM1682 161 L1690 145 L1703 131 L1715 124 L1732 119 L1757 121 L1771 127 L1790 144 L1798 159 L1796 162ZM1394 75 L1381 75 L1366 78 L1339 90 L1318 107 L1301 130 L1292 151 L1288 170 L1288 284 L1333 283 L1333 181 L1336 163 L1347 142 L1359 130 L1377 120 L1394 117ZM1506 74 L1482 78 L1459 88 L1442 100 L1429 113 L1418 129 L1410 147 L1405 170 L1405 193 L1409 213 L1418 234 L1432 253 L1445 265 L1459 274 L1477 282 L1495 286 L1519 287 L1537 284 L1568 271 L1590 252 L1601 238 L1607 225 L1556 225 L1542 236 L1531 241 L1516 244 L1500 243 L1488 239 L1474 231 L1461 218 L1454 206 L1454 203 L1616 202 L1619 194 L1620 172 L1617 153 L1611 136 L1599 116 L1587 103 L1568 89 L1552 81 L1529 75ZM1454 157 L1464 140 L1477 128 L1496 119 L1516 117 L1538 122 L1551 130 L1564 144 L1571 159 L1484 161 L1455 160ZM1029 74 L1009 78 L988 87 L972 98 L956 114 L942 135 L937 147 L932 167 L931 190 L934 209 L939 225 L952 247 L969 264 L980 272 L1005 283 L1023 287 L1048 287 L1067 283 L1096 268 L1119 246 L1131 225 L1081 225 L1069 235 L1055 242 L1047 244 L1027 244 L1016 241 L1004 235 L995 228 L986 217 L980 203 L1144 202 L1147 191 L1148 170 L1146 155 L1141 139 L1128 116 L1113 100 L1091 85 L1070 77 L1055 74ZM981 159 L987 147 L1001 131 L1018 121 L1029 118 L1051 118 L1069 124 L1078 130 L1090 142 L1098 158 L1097 160 L1092 161 L988 161ZM799 74 L778 77 L760 83 L739 95 L719 114 L708 130 L700 149 L696 169 L696 194 L703 221 L717 245 L740 267 L762 279 L790 286 L816 285 L828 282 L843 275 L867 255 L868 256 L868 270 L865 284 L857 299 L844 312 L829 320 L817 323 L798 324 L798 367 L814 369 L842 364 L863 355 L881 342 L901 318 L909 300 L914 279 L915 178 L911 155 L902 133 L892 118 L876 101 L860 90 L844 82 L824 76ZM797 119 L819 121 L831 126 L843 134 L858 154 L864 177 L861 199 L856 210 L848 221 L832 234 L810 241 L786 239 L768 230 L755 218 L745 200 L742 188 L742 172 L744 163 L753 145 L769 129 L783 122ZM1164 5 L1163 191 L1164 206 L1169 225 L1177 241 L1187 254 L1207 270 L1224 278 L1247 283 L1266 283 L1266 241 L1249 240 L1232 233 L1219 221 L1212 208 L1209 196 L1209 122 L1211 120 L1267 120 L1267 80 L1210 79 L1209 5ZM2 2 L1 187 L5 209 L17 236 L32 255 L45 266 L66 278 L82 284 L102 287 L125 286 L142 282 L164 272 L185 256 L198 241 L210 220 L214 208 L217 193 L217 169 L214 152 L205 129 L191 110 L175 95 L153 82 L133 75 L100 73 L83 76 L66 82 L49 92 L48 3ZM90 121 L99 119 L121 119 L139 126 L155 139 L165 153 L169 163 L171 186 L169 196 L163 210 L152 224 L140 233 L127 239 L101 241 L77 232 L61 218 L50 198 L47 174 L53 153 L62 140 L71 131ZM680 1 L634 1 L634 90 L632 92 L617 84 L600 78 L588 76 L563 76 L549 78 L531 84 L503 101 L485 119 L476 132 L468 150 L464 165 L463 197 L465 209 L470 224 L484 247 L498 261 L515 273 L530 280 L553 286 L579 287 L601 283 L617 277 L637 265 L655 248 L665 234 L675 213 L680 188ZM579 120 L590 122 L604 128 L622 144 L632 163 L634 187 L631 200 L625 212 L608 230 L587 240 L572 242 L560 241 L537 232 L530 227 L518 213 L512 201 L510 191 L510 173 L519 150 L536 132 L557 122Z"/></svg></div>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+<button class="tbtn" id="tbtn" aria-label="Open test panel">TEST</button>
+<div class="tpanel" id="tpanel" hidden>
+  <h3>Jump to screen</h3>
+  <div class="g">
+    <button data-go="claim">1 · Claim</button><button data-go="otp">1 · OTP</button>
+    <button data-go="payout">2 · Payout</button><button data-go="processing">3 · Processing</button>
+    <button data-go="success">3 · Success</button><button data-go="failure">Failure</button>
+  </div>
+  <h3>Mock settings</h3>
+  <label><input type="checkbox" id="tFail"> Next payout fails</label>
+  <label><input type="checkbox" id="tFast" checked> Fast processing (6s, else 20s)</label>
+  <label><input type="checkbox" id="tAuto" checked> Auto-read OTP from SMS</label>
+  <p>Test OTP is <b style="color:#fff">123456</b>. Any other code shows the error state. UPI IDs or account numbers containing "fail" also trigger the failure screen.</p>
+</div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const main=$('#main'),app=$('#app');
+const ARROW='';
+const TICK=(c='#16A34A')=>`<svg class="tick" viewBox="0 0 16 16"><circle cx="8" cy="8" r="8" fill="${c}"/><path d="M4.6 8.2l2.2 2.2 4.4-4.6" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const LOGOSVG=document.querySelector('.brand svg').outerHTML;
+/* ===== CONFIG: edit these before deploying ===== */
+const CONFIG={
+  TEST_MODE:true,               // true = mock OTP (123456), mock name lookup, TEST panel visible. Set false for production.
+  TOKEN:{amount:5,id:'BT-4821',from:'Budgetree Technology'},
+  DONE_URL:'https://www.budgetree.in',
+  REQUIRE_LOCATION:true         // block the flow until the browser shares location
+};
+const TOKEN=CONFIG.TOKEN;
+const S={acct2:'',name:'',phone:'',otpSent:false,verified:false,method:'upi',upi:'',upiName:'',acct:'',ifsc:'',bank:'',bankName:'',email:'',ref:'',time:null,failReason:''};
+const IFSC={SBIN:'State Bank of India',HDFC:'HDFC Bank',ICIC:'ICICI Bank',PUNB:'Punjab National Bank',UTIB:'Axis Bank',KKBK:'Kotak Mahindra Bank',BARB:'Bank of Baroda',CNRB:'Canara Bank',UBIN:'Union Bank of India',IDIB:'Indian Bank',YESB:'Yes Bank',IDFB:'IDFC First Bank',INDB:'IndusInd Bank',BKID:'Bank of India',FDRL:'Federal Bank'};
+const UPI_HANDLES='okaxis okhdfcbank okicici oksbi ybl ibl axl paytm ptyes ptsbi pthdfc ptaxis apl yapl rapl abfspay upi icici sbi hdfcbank axisbank axisb kotak kmbl yesbank yesbankltd idfcbank idfcfirst indus pnb barodampay boi cnrb unionbank uboi federal fbl kbl rbl aubank dbs hsbc sc citi citigold jupiteraxis fam slice superyes waaxis wahdfcbank wasbi waicici naviaxis tapicici timecosmos freecharge mobikwik ikwik airtel jio jiomoney postbank ippb dlb kvb tmb sib csbpay equitas ujjivan esaf jsb nsdl pockets payzapp amazonpay amazon apay okbizaxis okbizicici ezeepay mahb centralbank cboi idbi idbibank iob indianbank allbank andb syndicate obc vijb dcb dcbbank bandhan united'.split(' ');
+const SHORT={SBIN:'SBI',HDFC:'HDFC',ICIC:'ICICI',PUNB:'PNB',UTIB:'Axis',KKBK:'Kotak',BARB:'BoB',CNRB:'Canara',UBIN:'Union',IDIB:'Indian Bank',YESB:'Yes Bank',IDFB:'IDFC First',INDB:'IndusInd',BKID:'BoI',FDRL:'Federal'};
+const bshort=()=>SHORT[S.ifsc.slice(0,4)]||S.ifsc.slice(0,4);
+const tOpt=(id,d)=>{const e=document.getElementById(id);return e?e.checked:(CONFIG.TEST_MODE?d:false)};
+
+/* ===== API layer =====
+   In TEST_MODE every call is mocked in the browser.
+   For production, set TEST_MODE:false and point API_BASE at your backend.
+   Each function must return a Promise. See README.md for the request/response shapes. */
+CONFIG.API_BASE='/api';
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+async function post(path,body){
+  const r=await fetch(CONFIG.API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.message||'Something went wrong. Please try again.');
+  return j;
+}
+const API=CONFIG.TEST_MODE?{
+  sendOtp:async(phone)=>{await wait(900);return {ok:true}},
+  verifyOtp:async(phone,code)=>{await wait(900);return {verified:code==='123456'}},
+  lookupUpi:async(vpa)=>{await wait(900);if(/invalid/i.test(vpa))return {valid:false};return {valid:true,name:S.name.toUpperCase()}},
+  lookupBank:async(acct,ifsc)=>{await wait(1100);return {valid:true,name:S.name.toUpperCase()}},
+  payout:async(d)=>{await wait(tOpt('tFast',true)?4500:15000);
+    if(tOpt('tFail',false)||/fail/i.test((d.upi||'')+(d.account||'')))return {status:'failed',ref:'BTX'+Math.floor(1e6+Math.random()*9e6),reason:d.method==='upi'?"Your UPI app's bank did not accept the payment.":'The receiving bank did not respond in time.'};
+    return {status:'success',ref:'BTX'+Math.floor(1e6+Math.random()*9e6)}}
+}:{
+  sendOtp:(phone)=>post('/otp/send',{phone,token:TOKEN.id}),
+  verifyOtp:(phone,code)=>post('/otp/verify',{phone,code,token:TOKEN.id}),
+  lookupUpi:(vpa)=>post('/payee/upi',{vpa}),
+  lookupBank:(account,ifsc)=>post('/payee/bank',{account,ifsc}),
+  payout:(d)=>post('/payout',d)
+};
+const rupee=n=>'₹'+Number(n).toFixed(2);
+let timers=[];const clearT=()=>{timers.forEach(t=>{clearTimeout(t);clearInterval(t)});timers=[]};
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600)}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmtPhone=p=>p.length>5?p.slice(0,5)+' '+p.slice(5):p;
+const ticket=step=>`<div class="ticket"><div class="glow"></div><div class="shine"></div><div class="coin">₹</div><div class="lbl">Cash token worth</div><div class="amt">${rupee(TOKEN.amount)}</div><div class="foot"><span>Token ${TOKEN.id}</span><b>Step ${step} of 2</b></div></div>`;
+
+function go(view){const cur=main.querySelector('.screen');if(cur&&!go._busy){go._busy=true;cur.classList.add('out');setTimeout(()=>{go._busy=false;go2(view)},200);return}go2(view)}
+function go2(view){clearT();if(view!=='claim'){const sh=$('#locSheet');if(sh)sh.remove()}app.classList.toggle('dark',view==='processing');window.scrollTo(0,0);
+  ({claim:viewClaim,otp:()=>{if(!S.name)S.name='Atishay Jain';if(!S.phone)S.phone='8448494348';viewClaim(true)},payout:()=>{if(!S.name)S.name='Atishay Jain';S.verified=true;viewPayout()},processing:()=>{fillDemo();viewProcessing()},success:()=>{fillDemo();viewSuccess()},failure:()=>{fillDemo();S.failReason=S.failReason||'The receiving bank did not respond in time.';viewFailure()}})[view]()}
+function fillDemo(){if(!S.name)S.name='Atishay Jain';if(S.method==='upi'&&!S.upi){S.upi='atishay@okaxis';S.upiName=S.name.toUpperCase()}if(S.method==='bank'&&!S.acct){S.acct='182200170001475';S.acct2=S.acct;S.ifsc='PUNB0182200';S.bank='Punjab National Bank';S.bankName=S.name.toUpperCase()}if(!S.ref)S.ref='BTX'+Math.floor(1e6+Math.random()*9e6);S.time=S.time||new Date()}
+
+
+/* ---------- Location (inline on the claim page) ---------- */
+const inFrame=(()=>{try{return window.self!==window.top}catch(e){return true}})();
+let locState=null; // ask | wait | ok | denied | unsupported
+const PIN='<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 2a7 7 0 00-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 00-7-7zm0 9.5A2.5 2.5 0 1112 6.5a2.5 2.5 0 010 5z"/></svg>';
+const OKI='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+function renderLoc(){
+  // No card on the page: the browser's own pop-up asks. A blocking sheet appears only if location is blocked.
+  let sh=$('#locSheet');
+  const st=S.loc?'ok':(locState||'ask');
+  const show=st==='denied'||st==='unsupported'||st==='nogps';
+  if(!show){if(sh){sh.classList.add('closing');setTimeout(()=>sh.remove(),250)}return}
+  if(!sh){sh=document.createElement('div');sh.id='locSheet';sh.className='sheet-wrap';document.body.appendChild(sh)}
+  sh.classList.remove('closing');
+  sh.innerHTML=`<div class="sheet" role="dialog" aria-modal="true" aria-labelledby="locT"><span class="grab"></span>
+    <div class="loc-ic big"><i></i>${PIN}</div>
+    <h2 id="locT">${st==='unsupported'?'Location isn\'t available':st==='nogps'?'Turn on your phone\'s location':'Allow location to continue'}</h2>
+    <p class="lead">${st==='unsupported'?'This browser can\'t share your location. Open this link in Chrome or Safari to claim your cash token.':st==='nogps'?'We couldn\'t find your location. Turn on Location (GPS) from your phone\'s quick settings, then tap Try again.':'You need to allow location to claim this cash token. We use it only to keep your money safe.'}</p>
+    ${st==='denied'?`<div class="howto"><span class="ht">How to turn it on</span><ol><li>Tap the 🔒 or ⓘ icon next to the website address.</li><li>Open <b>Permissions</b> or <b>Site settings</b> and set <b>Location</b> to <b>Allow</b>.</li><li>Turn on location (GPS) in your phone settings, then tap <b>Try again</b>.</li></ol></div>
+`:''}
+    ${st!=='unsupported'?'<button class="btn" id="allow" type="button">Try again</button>':''}
+
+</div>`;
+  const a=$('#allow');if(a)a.onclick=askLocation;
+  const m=$('#mockLoc');if(m)m.onclick=()=>locOk({coords:{latitude:28.6139,longitude:77.2090,accuracy:20}},true);
+}
+function locOk(pos,mock){S.loc={lat:pos.coords.latitude,lng:pos.coords.longitude,acc:Math.round(pos.coords.accuracy||0),mock:!!mock};locState='ok';renderLoc();if(locOk._pending){locOk._pending=false;const c=$('#cta');if(c&&!c.hidden&&!S.otpSent)c.click()}}
+const SIM_LOC=()=>CONFIG.TEST_MODE&&inFrame; // the Claude app blocks real location, so show a look-alike browser prompt for testing
+function simPrompt(){
+  if($('#simPrompt'))return;
+  const w=document.createElement('div');w.id='simPrompt';w.className='sim-wrap';
+  w.innerHTML=`<div class="sim" role="dialog" aria-modal="true" aria-labelledby="simT"><div class="sim-ic">${PIN}</div>
+    <p id="simT"><b>budgetree.in</b> wants to<br>know your location</p>
+    <div class="sim-btns"><button type="button" id="simBlock">Block</button><button type="button" id="simAllow">Allow</button></div>
+    <small>Test pop-up. Inside the Claude app the real one can't appear.</small></div>`;
+  document.body.appendChild(w);
+  const close=()=>{w.classList.add('closing');setTimeout(()=>w.remove(),200)};
+  $('#simAllow').onclick=()=>{close();askLocation._busy=false;locOk({coords:{latitude:28.6139,longitude:77.2090,accuracy:20}},true)};
+  $('#simBlock').onclick=()=>{close();askLocation._busy=false;locState='denied';renderLoc()};
+}
+function askLocation(){
+  if(S.loc)return;
+  if(SIM_LOC()){simPrompt();return}
+  if(!('geolocation' in navigator)){locState='unsupported';renderLoc();return}
+  if(askLocation._busy)return;askLocation._busy=true;
+  locState=locState==='denied'||locState==='nogps'?locState:'wait';
+  const btn=$('#allow');if(btn){btn.disabled=true;btn.innerHTML='<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Checking…'}
+  const end=()=>{askLocation._busy=false};
+  const tryGet=(high)=>navigator.geolocation.getCurrentPosition(
+    p=>{end();locOk(p)},
+    e=>{ if(e&&e.code===1){end();locState='denied';renderLoc();return}          // user or browser blocked it
+         if(high){tryGet(false);return}                                          // GPS slow or off: retry with network location
+         end();locState='nogps';renderLoc() },
+    {enableHighAccuracy:high,timeout:high?10000:20000,maximumAge:120000});
+  try{tryGet(true)}catch(e){end();locState='denied';renderLoc()}
+}
+// Close the sheet by itself once the person turns location on and comes back.
+try{navigator.permissions&&navigator.permissions.query({name:'geolocation'}).then(ps=>{ps.onchange=()=>{if(ps.state==='granted'&&!S.loc)askLocation()}}).catch(()=>{})}catch(e){}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!S.loc&&$('#locSheet'))askLocation()});
+window.addEventListener('focus',()=>{if(!S.loc&&$('#locSheet'))askLocation()});
+/* ---------- 1 · Claim + inline OTP ---------- */
+function viewClaim(openOtp){
+  S.otpSent=!!openOtp;
+  main.innerHTML=`<section class="screen">
+    ${S.otpSent?'':`<div class="banner"><div class="bph">Add banner image<span>1080 × 480 px recommended</span></div><div class="avatar">${LOGOSVG}</div></div><h1>Claim your cash token</h1>`}
+    ${ticket(1)}
+    <div class="field"><label class="flabel" for="name">Full name</label>
+      <div class="input" id="nameBox"><input id="name" autocomplete="name" placeholder="Enter your full name" value="${esc(S.name)}" maxlength="60"></div><div class="err" id="nameErr"></div></div>
+    <div class="field"><div class="flabel"><label for="phone">Mobile number</label>${S.otpSent?'<button type="button" id="change">Change</button>':''}</div>
+      <div class="row"><div class="input cc"><span class="flag"><i></i><i></i><i></i></span>+91</div>
+      <div class="input" id="phoneBox" style="flex:1"><input id="phone" inputmode="numeric" autocomplete="tel-national" placeholder="10-digit number" value="${fmtPhone(S.phone)}" maxlength="11"></div></div><div class="err" id="phoneErr"></div></div>
+    <div id="otpArea"></div>
+    <div class="cta" id="ctaWrap"><button class="btn" id="cta">${S.otpSent?'Verify & continue':'Get OTP'} ${ARROW}</button></div>
+  </section>`;
+  const name=$('#name'),phone=$('#phone'),cta=$('#cta');
+  name.addEventListener('input',()=>{S.name=name.value;$('#nameBox').classList.remove('bad');$('#nameErr').textContent='';syncCta()});
+  phone.addEventListener('input',()=>{const d=phone.value.replace(/\D/g,'').slice(0,10);S.phone=d;phone.value=fmtPhone(d);$('#phoneBox').classList.remove('bad');$('#phoneErr').textContent='';syncCta()});
+  function validName(){return /^[A-Za-z][A-Za-z .'-]{1,59}$/.test(S.name.trim())&&S.name.trim().length>=3}
+  function validPhone(){return /^[6-9]\d{9}$/.test(S.phone)}
+  const locNeeded=()=>CONFIG.REQUIRE_LOCATION&&!S.loc;
+  function syncCta(){if(!S.otpSent){const show=S.phone.length===10;const w=$('#ctaWrap');if(w.hidden===show){w.hidden=!show;if(show){w.classList.remove('appear');void w.offsetWidth;w.classList.add('appear')}}cta.disabled=false}}
+  if(S.otpSent){name.disabled=true;phone.disabled=true;$('#nameBox').classList.add('lock');$('#phoneBox').classList.add('lock');
+    $('#change').onclick=()=>{clearT();viewClaim(false);setTimeout(()=>$('#phone').focus(),50)};renderOtp(cta)}
+  else{renderLoc();syncCta();
+    if(CONFIG.REQUIRE_LOCATION&&!S.loc&&!locState&&!askLocation._auto){askLocation._auto=true;setTimeout(askLocation,700)}
+    cta.onclick=()=>{let ok=true;
+      if(!validName()){ok=false;$('#nameBox').classList.add('bad');$('#nameErr').textContent='Enter your full name using letters only (at least 3 characters).'}
+      if(!validPhone()){ok=false;$('#phoneBox').classList.add('bad');$('#phoneErr').textContent='Enter a valid 10-digit Indian mobile number starting with 6, 7, 8 or 9.'}
+      if(!ok)return;
+      if(locNeeded()){locOk._pending=true;if(locState==='wait'){toast('Tap Allow on the location pop-up to continue')}else{askLocation()}return}
+      cta.disabled=true;cta.innerHTML='<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Sending OTP…';
+      API.sendOtp(S.phone).then(()=>{S.name=S.name.trim();viewClaim(true);toast('OTP sent to +91 '+fmtPhone(S.phone)+(CONFIG.TEST_MODE?' · test code 123456':''))}).catch(e=>{cta.disabled=false;cta.innerHTML='Get OTP';$('#phoneErr').textContent=e.message})}}
+}
+function renderOtp(cta){
+  const area=$('#otpArea');
+  area.innerHTML=`<div class="field"><label class="flabel" for="o0">Enter the code sent to +91 ${fmtPhone(S.phone)}</label>
+    <div class="otp" id="otp">${[0,1,2,3,4,5].map(i=>`<input id="o${i}" inputmode="numeric" autocomplete="${i?'off':'one-time-code'}" aria-label="Digit ${i+1}">`).join('')}</div>
+    <div class="err" id="otpErr"></div>
+    <div class="otpmeta"><span class="reading" id="reading">${tOpt('tAuto',true)?'<span class="spin"></span>Reading OTP from SMS · verifies automatically':'Type the 6-digit code'}</span><button class="resend" id="resend" disabled>Resend in 00:30</button></div>
+    ${CONFIG.TEST_MODE?'<div class="demo">Testing mode: use code <b>123456</b>.</div>':''}</div>`;
+  const boxes=[...area.querySelectorAll('.otp input')];let attempts=0;
+  const code=()=>boxes.map(b=>b.value).join('');
+  const sync=()=>{cta.disabled=code().length!==6};
+  boxes.forEach((b,i)=>{
+    b.addEventListener('input',()=>{const v=b.value.replace(/\D/g,'');if(v.length>1){fill(v);return}b.value=v;if(v){b.classList.remove('pop');void b.offsetWidth;b.classList.add('pop')}$('#otp').classList.remove('bad');$('#otpErr').textContent='';if(v&&i<5)boxes[i+1].focus();sync();if(code().length===6)verify()});
+    b.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!b.value&&i>0){boxes[i-1].focus();boxes[i-1].value='';sync()}if(e.key==='ArrowLeft'&&i>0)boxes[i-1].focus();if(e.key==='ArrowRight'&&i<5)boxes[i+1].focus()});
+    b.addEventListener('paste',e=>{e.preventDefault();fill((e.clipboardData||window.clipboardData).getData('text'))});
+  });
+  function fill(s){const d=s.replace(/\D/g,'').slice(0,6).split('');boxes.forEach((b,i)=>b.value=d[i]||'');boxes[Math.min(d.length,5)].focus();sync();if(d.length===6)verify()}
+  boxes[0].focus();sync();
+  cta.onclick=verify;
+  let left=30;const rs=$('#resend');
+  const tick=()=>{left--;if(left<=0){rs.disabled=false;rs.textContent='Resend OTP';return}rs.textContent='Resend in 00:'+String(left).padStart(2,'0')};
+  const iv=setInterval(()=>{tick();if(left<=0)clearInterval(iv)},1000);timers.push(iv);
+  rs.onclick=()=>{API.sendOtp(S.phone).catch(()=>{});toast('New OTP sent'+(CONFIG.TEST_MODE?' · test code 123456':''));clearT();renderOtp(cta)};
+  if(!CONFIG.TEST_MODE&&'OTPCredential' in window){const ac=new AbortController();timers.push(setTimeout(()=>ac.abort(),120000));
+    navigator.credentials.get({otp:{transport:['sms']},signal:ac.signal}).then(o=>{if(o&&o.code)fill(o.code)}).catch(()=>{})}
+  if(tOpt('tAuto',true)){timers.push(setTimeout(()=>{if(!code()){boxes.forEach((b,i)=>timers.push(setTimeout(()=>{b.value='123456'[i];b.classList.add('pop');if(i===5){sync();verify()}},i*90)))}},2600))}
+  let busy=false;
+  function verify(){if(busy||code().length!==6)return;busy=true;cta.disabled=true;cta.innerHTML='<span class="spin" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></span> Verifying…';$('#reading').innerHTML='<span class="spin"></span>Checking code…';
+    API.verifyOtp(S.phone,code()).then(res=>{busy=false;
+      if(res.verified){$('#otp').classList.add('good');$('#reading').innerHTML=TICK()+'Mobile number verified';S.verified=true;timers.push(setTimeout(()=>go('payout'),600))}
+      else{attempts++;$('#otp').classList.add('bad');$('#otpErr').textContent=attempts>=3?'Too many wrong attempts. Tap Resend OTP to get a new code.':`That code is wrong. ${3-attempts} attempt${3-attempts>1?'s':''} left.`;$('#reading').textContent='Type the 6-digit code';cta.innerHTML='Verify & continue '+ARROW;
+        if(attempts>=3){boxes.forEach(b=>{b.value='';b.disabled=true});rs.disabled=false;rs.textContent='Resend OTP';cta.disabled=true}else{boxes.forEach(b=>b.value='');boxes[0].focus();sync()}}
+    }).catch(e=>{busy=false;$('#otpErr').textContent=e.message;$('#reading').textContent='Type the 6-digit code';cta.innerHTML='Verify & continue';sync()})}
+}
+
+/* ---------- 2 · Payout ---------- */
+function viewPayoutKeep(){viewPayout()}
+// IFSC lookup: real bank + branch from Razorpay's free IFSC API on your own site; bank-code list as a fallback.
+const ifscCache={};
+async function lookupIfsc(code){
+  if(code in ifscCache)return ifscCache[code];
+  let info=null;
+  if(!inFrame){try{const r=await fetch('https://ifsc.razorpay.com/'+code);if(r.ok){const j=await r.json();info={bank:j.BANK,branch:j.BRANCH,city:j.CITY}}else if(r.status===404){ifscCache[code]=null;return null}}catch(e){}}
+  if(!info){await wait(300);const b=IFSC[code.slice(0,4)];info=b?{bank:b}:null}
+  ifscCache[code]=info;return info;
+}
+function upiError(v){
+  if(!v.includes('@'))return 'A UPI ID has an @, like name@okaxis or 9876543210@ybl.';
+  const [u,h,...rest]=v.split('@');
+  if(rest.length)return 'A UPI ID can have only one @.';
+  if(!u)return 'Add your name or number before the @.';
+  if(/^\d+$/.test(u)&&!/^[6-9]\d{9}$/.test(u))return 'A number-based UPI ID uses your 10-digit mobile number, like 9876543210@ybl.';
+  if(!/^[a-z0-9][a-z0-9._-]{1,48}[a-z0-9]$/.test(u))return 'The part before @ can use letters, numbers, dot, dash or underscore (3 to 50 characters).';
+  if(!h)return 'Add your UPI app handle after the @, like okaxis, ybl or paytm.';
+  if(!UPI_HANDLES.includes(h))return `"@${h}" isn't a UPI handle we recognise. Check it in your UPI app (for example @okaxis, @ybl, @paytm).`;
+  return '';
+}
+function viewPayout(){
+  main.innerHTML=`<section class="screen">${ticket(2)}
+    <h2>Where should we send ${'₹'+TOKEN.amount}?</h2>
+    <div class="seg ${S.method}" role="tablist"><span class="knob"></span><button role="tab" id="tabUpi" aria-selected="${S.method==='upi'}">⚡ UPI</button><button role="tab" id="tabBank" aria-selected="${S.method==='bank'}">🏛 Bank account</button></div>
+    <div id="methodArea" style="display:flex;flex-direction:column;gap:14px"></div>
+    <div class="field"><div class="flabel"><label for="email">Email ID</label><span class="opt">OPTIONAL</span></div>
+      <div class="input" id="emailBox"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="#4B6B60" stroke-width="1.6"><rect x="2.5" y="4.5" width="15" height="11" rx="2"/><path d="M3 5.5l7 5 7-5"/></svg><input id="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="${esc(S.email)}"></div>
+      <div class="err" id="emailErr"></div><div class="hint">We'll send your payment receipt here.</div></div>
+    <div class="cta"><button class="btn" id="cta">Receive ${'₹'+TOKEN.amount} ${ARROW}</button></div></section>`;
+  const segSw=m=>{if(S.method===m)return;S.method=m;const sg=$('.seg');sg.className='seg '+m;$('#tabUpi').setAttribute('aria-selected',m==='upi');$('#tabBank').setAttribute('aria-selected',m==='bank');setTimeout(viewPayoutKeep,300)};$('#tabUpi').onclick=()=>segSw('upi');$('#tabBank').onclick=()=>segSw('bank');
+  const email=$('#email'),cta=$('#cta');
+  const emailOk=()=>!S.email||/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(S.email);
+  email.addEventListener('input',()=>{S.email=email.value.trim();$('#emailBox').classList.remove('bad');$('#emailErr').textContent='';sync()});
+  email.addEventListener('blur',()=>{if(!emailOk()){$('#emailBox').classList.add('bad');$('#emailErr').textContent='Check the email address, for example name@gmail.com.'}});
+  const area=$('#methodArea');let ready=false;
+  const sync=()=>{cta.disabled=!(ready&&emailOk())};
+  let lookT;
+  if(S.method==='upi'){
+    area.innerHTML=`<div class="field"><label class="flabel" for="upi">UPI ID</label><div class="input" id="upiBox"><input id="upi" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="name@bank" value="${esc(S.upi)}"></div><div class="err" id="upiErr"></div></div><div id="nameCard"></div><div class="note">⚡ UPI payouts usually land in under 30 seconds.</div>`;
+    const upi=$('#upi');
+    let upiErrT;
+    const check=()=>{const v=S.upi;ready=false;sync();clearTimeout(lookT);clearTimeout(upiErrT);const nc=$('#nameCard');
+      if(!v){nc.innerHTML='';return}
+      const ve=upiError(v);if(ve){nc.innerHTML='';upiErrT=setTimeout(()=>{if(S.upi===v){$('#upiBox').classList.add('bad');$('#upiErr').textContent=ve}},900);timers.push(upiErrT);return}
+      nc.innerHTML=`<div class="verified wait"><span class="spin"></span><div><small>Checking UPI ID</small><b>Fetching account name…</b></div></div>`;
+      const q=v;lookT=setTimeout(()=>API.lookupUpi(q).then(res=>{if(S.upi!==q)return;if(!res.valid){nc.innerHTML='';$('#upiBox').classList.add('bad');$('#upiErr').textContent='This UPI ID does not exist. Check it in your UPI app and try again.';return}
+        S.upiName=res.name;nc.innerHTML=`<div class="verified">${TICK()}<div><small>Name on this UPI ID</small><b>${esc(S.upiName)}</b></div></div>`;ready=true;sync()}).catch(e=>{nc.innerHTML='';$('#upiErr').textContent=e.message}),500);timers.push(lookT)};
+    upi.addEventListener('input',()=>{S.upi=upi.value.trim().toLowerCase();if(upi.value!==S.upi)upi.value=S.upi;$('#upiBox').classList.remove('bad');$('#upiErr').textContent='';check()});
+    upi.addEventListener('blur',()=>{const ve=S.upi&&upiError(S.upi);if(ve){$('#upiBox').classList.add('bad');$('#upiErr').textContent=ve}});
+    check();
+  }else{
+    area.innerHTML=`<div class="field"><label class="flabel" for="acct">Account number</label><div class="input" id="acctBox"><input id="acct" inputmode="numeric" autocomplete="off" placeholder="9 to 18 digits" value="${esc(S.acct.replace(/(\d{4})(?=\d)/g,'$1 '))}" maxlength="22"></div><div class="err" id="acctErr"></div></div>
+      <div class="field"><label class="flabel" for="acct2">Re-enter account number</label><div class="input" id="acct2Box"><input id="acct2" inputmode="numeric" autocomplete="off" placeholder="Type it again to confirm" value="${esc(S.acct2.replace(/(\d{4})(?=\d)/g,'$1 '))}" maxlength="22"><span id="matchChip"></span></div><div class="err" id="acct2Err"></div></div>
+      <div class="field"><label class="flabel" for="ifsc">IFSC code</label><div class="input" id="ifscBox"><input id="ifsc" autocapitalize="characters" autocomplete="off" spellcheck="false" placeholder="e.g. SBIN0001234" value="${esc(S.ifsc)}" maxlength="11"><span id="bankChip"></span></div><div class="err" id="ifscErr"></div></div>
+      <div id="nameCard"></div>`;
+    const acct=$('#acct'),acct2=$('#acct2'),ifsc=$('#ifsc');
+    const acctOk=()=>/^\d{9,18}$/.test(S.acct)&&!/^(\d)\1+$/.test(S.acct)&&!/^0+$/.test(S.acct),ifscFmt=()=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(S.ifsc);
+    const matchOk=()=>S.acct2.length>0&&S.acct2===S.acct;
+    let ifscInfo=null,ifscFor='';
+    const check=()=>{ready=false;sync();clearTimeout(lookT);const nc=$('#nameCard');
+      $('#matchChip').innerHTML=S.acct2.length>=9?(matchOk()?`<span class="chip-ok">${TICK()}Matches</span>`:''):'';
+      if(S.acct2.length>=S.acct.length&&S.acct2&&!matchOk()){$('#acct2Box').classList.add('bad');$('#acct2Err').textContent='The account numbers don\'t match. Check both and try again.'}
+      if(!ifscFmt()){S.bank='';$('#bankChip').innerHTML='';nc.innerHTML='';return}
+      if(ifscFor!==S.ifsc){ifscFor=S.ifsc;ifscInfo=null;S.bank='';$('#bankChip').innerHTML='<span class="spin"></span>';
+        const q=S.ifsc;lookupIfsc(q).then(info=>{if(S.ifsc!==q)return;ifscInfo=info;
+          if(!info){$('#bankChip').innerHTML='';$('#ifscBox').classList.add('bad');$('#ifscErr').textContent='We couldn\'t find this IFSC. Check it on your cheque book or bank app.';return}
+          S.bank=info.bank;$('#bankChip').innerHTML=`<span class="chip-ok">${TICK()}${esc(SHORT[q.slice(0,4)]||info.bank)}</span>`;$('#ifscErr').innerHTML=info.branch?`<span style="color:var(--muted)">${esc(info.branch)}${info.city?', '+esc(info.city):''}</span>`:'';check()});
+        nc.innerHTML='';return}
+      if(!ifscInfo){nc.innerHTML='';return}
+      if(!(acctOk()&&matchOk())){nc.innerHTML='';return}
+      nc.innerHTML=`<div class="verified wait"><span class="spin"></span><div><small>Checking with ${esc(S.bank)}</small><b>Fetching account holder name…</b></div></div>`;
+      const qa=S.acct,qi=S.ifsc;lookT=setTimeout(()=>API.lookupBank(qa,qi).then(res=>{if(S.acct!==qa||S.ifsc!==qi)return;if(!res.valid){nc.innerHTML='';$('#acctErr').textContent='We could not find this account. Check the account number and IFSC.';return}if(res.bank)S.bank=res.bank;S.bankName=res.name;nc.innerHTML=`<div class="verified">${TICK()}<div><small>Name as per bank records</small><b>${esc(S.bankName)}</b></div></div>`;ready=true;sync()}).catch(e=>{nc.innerHTML='';$('#acctErr').textContent=e.message}),500);timers.push(lookT)};
+    acct.addEventListener('input',()=>{const d=acct.value.replace(/\D/g,'').slice(0,18);S.acct=d;acct.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('#acctBox').classList.remove('bad');$('#acctErr').textContent='';$('#acct2Box').classList.remove('bad');$('#acct2Err').textContent='';check()});
+    acct.addEventListener('blur',()=>{if(S.acct&&!acctOk()){$('#acctBox').classList.add('bad');$('#acctErr').textContent='Enter a valid account number (9 to 18 digits).'}});
+    acct2.addEventListener('input',()=>{const d=acct2.value.replace(/\D/g,'').slice(0,18);S.acct2=d;acct2.value=d.replace(/(\d{4})(?=\d)/g,'$1 ');$('#acct2Box').classList.remove('bad');$('#acct2Err').textContent='';check()});
+    acct2.addEventListener('paste',e=>{e.preventDefault();toast('Please type the account number again to confirm')});
+    acct2.addEventListener('blur',()=>{if(S.acct2&&!matchOk()){$('#acct2Box').classList.add('bad');$('#acct2Err').textContent='The account numbers don\'t match. Check both and try again.'}});
+    ifsc.addEventListener('input',()=>{S.ifsc=ifsc.value.toUpperCase().replace(/[^A-Z0-9]/g,'');ifsc.value=S.ifsc;$('#ifscBox').classList.remove('bad');$('#ifscErr').textContent='';check()});
+    ifsc.addEventListener('blur',()=>{if(S.ifsc&&!ifscFmt()){$('#ifscBox').classList.add('bad');$('#ifscErr').textContent='IFSC has 11 characters: 4 letters, a zero, then 6 letters or digits. It is printed on your cheque book.'}});
+    check();
+  }
+  sync();
+  cta.onclick=()=>{if(cta.disabled)return;S.time=new Date();go('processing')};
+}
+
+/* ---------- 3 · Processing ---------- */
+function viewProcessing(){
+  const upi=S.method==='upi';const dur=tOpt('tFast',true)?6:20;
+  main.innerHTML=`<section class="screen" style="gap:18px">
+    <div class="from">FROM ${LOGOSVG}</div><div class="trail"></div>
+    <div class="orbit"><div class="ring"></div><div class="ring r2"></div>
+      <svg class="prog" viewBox="0 0 140 140"><circle cx="70" cy="70" r="64" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="6"/><circle id="arc" cx="70" cy="70" r="64" fill="none" stroke="#6EE7B7" stroke-width="6" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402"/></svg>
+      <div class="core">₹${TOKEN.amount}</div>${flyers()}<span class="dot"></span><span class="dot" style="animation-delay:-1s"></span><span class="dot" style="animation-delay:-2s"></span></div>
+    <div class="trail"></div><div class="to">${upi?'<span style="font-size:18px">⚡</span>':'<span style="font-size:18px">🏛</span>'}<div><small>TO · ${upi?'UPI':'BANK'}</small><b>${esc(upi?S.upi:(bshort()+' ••'+S.acct.slice(-4)))}</b></div></div>
+    <div class="ptitle"><h2>Your ₹${TOKEN.amount} is on the move</h2><p>Sit tight, this usually takes about ${dur} seconds.</p></div>
+    <div><div class="bar"><i id="bar"></i></div><div class="barmeta"><span id="pct">0%</span><span id="left">00:${String(dur).padStart(2,'0')} left</span></div></div>
+    <div class="steps"><span id="s1" class="on">${TICK('#10B981')}Verified</span><span id="s2">${upi?'UPI checked':'Bank checked'}</span><span id="s3">Sending</span></div>
+    <div class="warn"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5 7V5a3 3 0 016 0v2h1a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1V8a1 1 0 011-1h1zm1.5 0h3V5a1.5 1.5 0 00-3 0v2z"/></svg>Please don't refresh or close this page</div>
+  </section>`;
+  let result=null;const t0=Date.now();const total=dur*1000;
+  API.payout({token:TOKEN.id,amount:TOKEN.amount,name:S.name,phone:S.phone,method:S.method,upi:upi?S.upi:undefined,account:upi?undefined:S.acct,ifsc:upi?undefined:S.ifsc,email:S.email||undefined,location:S.loc||undefined})
+    .then(r=>{result=r}).catch(e=>{result={status:'failed',reason:e.message}});
+  const iv=setInterval(()=>{let p=Math.min(1,(Date.now()-t0)/total);if(!result)p=Math.min(p,.92);else if(result.status==='failed')p=Math.max(p,.75);const pc=Math.round(p*100);
+    $('#bar').style.width=pc+'%';$('#pct').textContent=pc+'%';$('#arc').style.strokeDashoffset=402*(1-p);
+    $('#left').textContent='00:'+String(Math.ceil(dur*(1-p))).padStart(2,'0')+' left';
+    if(p>.3){$('#s2').classList.add('on');$('#s2').innerHTML=TICK('#10B981')+(upi?'UPI checked':'Bank checked')}
+    if(p>.6){$('#s3').classList.add('now');$('#s3').innerHTML='<span class="spin"></span>Sending'}
+    if(result&&result.status==='failed'){clearInterval(iv);S.ref=result.ref||S.ref||'—';S.failReason=result.reason||'The payment could not be completed.';{const f=$('#tFail');if(f)f.checked=false}timers.push(setTimeout(()=>go('failure'),400));return}
+    if(result&&p>=1){clearInterval(iv);S.ref=result.ref||S.ref;go('success')}},100);
+  timers.push(iv);
+}
+
+/* ---------- 3 · Success ---------- */
+function confetti(){const c=['#6EE7B7','#fff','#34D399','#FDE68A','#A7F3D0'];return Array.from({length:36},(_,i)=>`<i class="conf" style="left:${(i*29)%100}%;top:${(i*17)%40}%;--d:${(.3+(i%12)*.12).toFixed(2)}s;--t:${(2.2+(i%5)*.4).toFixed(1)}s;--r:${(i%2?1:-1)*(240+i*20)}deg;background:${c[i%5]};${i%4===0?'width:7px;height:7px;border-radius:50%;':''}"></i>`).join('')}
+function flyers(){return Array.from({length:8},(_,i)=>{const a=i/8*Math.PI*2;return `<span class="flyer" style="left:calc(50% - 5px);top:calc(50% - 8px);--dx:${Math.round(Math.cos(a)*120)}px;--dy:${Math.round(Math.sin(a)*120)}px;animation-delay:${(i*.3).toFixed(1)}s">₹</span>`}).join('')}
+function countUp(el,to){const t0=performance.now();const f=t=>{const p=Math.min(1,(t-t0)/900);const e=1-Math.pow(1-p,3);el.textContent=rupee(to*e);if(p<1)requestAnimationFrame(f)};requestAnimationFrame(f)}
+function fmtTime(d){return d.toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true})}
+function viewSuccess(){
+  const upi=S.method==='upi';
+  const paidTo=upi?`${esc(S.name)} · UPI`:`${esc(S.name)} · ${esc(bshort())} ••${S.acct.slice(-4)}`;
+  main.innerHTML=`<section class="screen">
+    <div class="hero">${confetti()}<div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+      <h2>₹${TOKEN.amount} is on its way!</h2><p>Sent to ${upi?esc(S.upi):'your '+esc(S.bank)+' account ••'+S.acct.slice(-4)}</p></div>
+    <div class="receipt"><div class="top"><div><small>Amount received</small><div class="amt" id="cnt">${rupee(0)}</div></div><span class="status">${TICK()}Success</span></div>
+      <dl><dt>Paid to</dt><dd>${paidTo}</dd><dt>From</dt><dd>${TOKEN.from}</dd><dt>Reference no.</dt><dd>${S.ref}<button class="copy" id="copy">Copy</button></dd><dt>Date &amp; time</dt><dd>${fmtTime(S.time)}</dd>${S.loc?`<dt>Claim location</dt><dd>${S.loc.lat.toFixed(3)}, ${S.loc.lng.toFixed(3)}${S.loc.mock?' (sample)':''}</dd>`:''}${S.email?`<dt>Receipt sent to</dt><dd>${esc(S.email)}</dd>`:''}</dl></div>
+    <div class="cta">${inFrame?`<a class="btn" id="done" href="${CONFIG.DONE_URL}" target="_blank" rel="noopener" style="text-decoration:none">Done</a>`:'<button class="btn" id="done" type="button">Done</button>'}
+      <div class="subcta">Takes you to www.budgetree.in</div></div></section>`;
+  {const d=$('#done');if(d&&d.tagName==='BUTTON')d.onclick=()=>{window.location.replace(CONFIG.DONE_URL)}}
+  setTimeout(()=>{const c=$('#cnt');if(c)countUp(c,TOKEN.amount)},500);
+  if(navigator.vibrate)try{navigator.vibrate([30,40,30])}catch(e){}
+  $('#copy').onclick=()=>{navigator.clipboard?.writeText(S.ref).then(()=>toast('Reference number copied'),()=>toast('Reference: '+S.ref))};
+}
+
+/* ---------- Failure ---------- */
+function viewFailure(){
+  const upi=S.method==='upi';
+  main.innerHTML=`<section class="screen">
+    <div class="hero fail"><div class="big"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M7 7l10 10M17 7L7 17"/></svg></div>
+      <h2>We couldn't send ₹${TOKEN.amount}</h2><p>No money has left the token. You can try again.</p></div>
+    <div class="receipt"><div class="top"><div><small>Amount</small><div class="amt">${rupee(TOKEN.amount)}</div></div><span class="status f">Failed</span></div>
+      <dl><dt>Reason</dt><dd>${esc(S.failReason)}</dd><dt>Tried to send to</dt><dd>${upi?esc(S.upi):esc(S.bank)+' ••'+S.acct.slice(-4)}</dd><dt>Reference no.</dt><dd>${S.ref}</dd><dt>Date &amp; time</dt><dd>${fmtTime(S.time)}</dd></dl></div>
+    <div class="cta" style="display:flex;flex-direction:column;gap:10px"><button class="btn" id="retry">Try again ${ARROW}</button><button class="btn ghost" id="change">${upi?'Use bank account instead':'Use UPI instead'}</button>
+      <div class="subcta" style="margin-top:0">Still stuck? Call 91939 11100</div></div></section>`;
+  $('#retry').onclick=()=>{S.time=new Date();go('processing')};
+  $('#change').onclick=()=>{S.method=upi?'bank':'upi';go('payout')};
+}
+
+document.addEventListener('pointerdown',e=>{const b=e.target.closest('.btn');if(!b||b.disabled)return;const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height);const s=document.createElement('span');s.className='ripple';s.style.cssText=`width:${d}px;height:${d}px;left:${e.clientX-r.left-d/2}px;top:${e.clientY-r.top-d/2}px`;b.appendChild(s);setTimeout(()=>s.remove(),650)});
+/* tester */
+$('#tbtn').onclick=()=>{const p=$('#tpanel');p.hidden=!p.hidden};
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{$('#tpanel').hidden=true;go(b.dataset.go)});
+if(!CONFIG.TEST_MODE){$('#tbtn').remove();$('#tpanel').remove()}
+go('claim');
+</script>
+</body>
+</html>
